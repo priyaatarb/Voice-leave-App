@@ -121,6 +121,7 @@
     </div>
 
     <script>
+      const BASE_URL = "https://voice-leave-app.onrender.com";
       const leaveTypeElement = document.getElementById("leave-type");
       const fromDateCombinedElement =
         document.getElementById("from-date-combined");
@@ -294,7 +295,7 @@
           };
 
           try {
-            const response = await fetch("https://voice-leave-app.onrender.com//apply_leave", {
+            const response = await fetch(`${BASE_URL}/apply_leave`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
