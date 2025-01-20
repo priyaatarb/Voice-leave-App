@@ -166,7 +166,7 @@
         const inputDate = new Date(date);
         return inputDate < today.setHours(0, 0, 0, 0); // Consider only the date, not time
       }
-
+        listeningIcon.style.display = "none" //making ;istening disabled
       micIcon.addEventListener("click", () => {
         listeningIcon.style.display = "inline";
         micIcon.style.display = "none";
