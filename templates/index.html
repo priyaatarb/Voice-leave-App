@@ -73,6 +73,10 @@
     <div class="container">
         <h1>
             Voice Leave Application
+<<<<<<< HEAD
+=======
+          
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
             <img id="start-voice" class="mic-icon" src="./microphone-342.png" alt="Microphone Icon">
             <img id="listening-icon" class="listening-icon" src="./headphones-5796.png" alt="Listening Icon">
         </h1>
@@ -91,7 +95,11 @@
         <button id="submit-leave">Submit Leave</button>
         <div id="response" class="response"></div>
     </div>
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
     <script>
         const leaveTypeElement = document.getElementById("leave-type");
         const fromDateCombinedElement = document.getElementById("from-date-combined");
@@ -99,6 +107,7 @@
         const responseElement = document.getElementById("response");
         const micIcon = document.getElementById("start-voice");
         const listeningIcon = document.getElementById("listening-icon");
+<<<<<<< HEAD
  
         let leaveType = "";
         let fromDate = "";
@@ -130,12 +139,24 @@
             return inputDate < today.setHours(0, 0, 0, 0); // Consider only the date, not time
         }
  
+=======
+
+        let leaveType = "";
+        let fromDate = "";
+        let toDate = "";
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
         micIcon.addEventListener("click", () => {
             listeningIcon.style.display = "inline";
             micIcon.style.display = "none";
             responseElement.textContent = "Listening for voice input...";
             recognition.start();
         });
+<<<<<<< HEAD
  
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript.toLowerCase();
@@ -144,12 +165,26 @@
             const leaveTypeRegex = /(sick|vacation|casual|emergency)/i;
             const dateRegex = /\b(\d{1,2})\s*(january|february|march|april|may|june|july|august|september|october|november|december)\b/g;
  
+=======
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript.toLowerCase();
+            responseElement.textContent = `You said: "${transcript}"`;
+
+            const leaveTypeRegex = /(sick|vacation|casual|emergency)/i;
+            const dateRegex = /\b(\d{1,2})\s*(january|february|march|april|may|june|july|august|september|october|november|december)\s*(\d{4})\b/g;
+
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
             const leaveTypeMatch = transcript.match(leaveTypeRegex);
             if (leaveTypeMatch) {
                 leaveType = leaveTypeMatch[0].trim();
                 leaveTypeElement.value = leaveType;
             }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
             const dateMatches = [...transcript.matchAll(dateRegex)];
             if (dateMatches.length >= 2) {
                 const months = {
@@ -157,6 +192,7 @@
                     may: "05", june: "06", july: "07", august: "08",
                     september: "09", october: "10", november: "11", december: "12"
                 };
+<<<<<<< HEAD
  
                 const fromDay = parseInt(dateMatches[0][1]);
                 const fromMonth = months[dateMatches[0][2].toLowerCase()];
@@ -227,11 +263,51 @@
  
             const data = {
                 employee_name: "Mr . employee name",  
+=======
+
+                const fromDay = dateMatches[0][1].padStart(2, "0");
+                const fromMonth = months[dateMatches[0][2].toLowerCase()];
+                const fromYear = dateMatches[0][3];
+                fromDate = `${fromYear}-${fromMonth}-${fromDay}`;
+                fromDateCombinedElement.value = fromDate;
+
+                const toDay = dateMatches[1][1].padStart(2, "0");
+                const toMonth = months[dateMatches[1][2].toLowerCase()];
+                const toYear = dateMatches[1][3];
+                toDate = `${toYear}-${toMonth}-${toDay}`;
+                toDateCombinedElement.value = toDate;
+            } else {
+                responseElement.textContent = "Please mention both From Date and To Date.";
+            }
+
+            listeningIcon.style.display = "none";
+            micIcon.style.display = "inline";
+        };
+
+        recognition.onerror = (event) => {
+            responseElement.textContent = `Error: ${event.error}`;
+            listeningIcon.style.display = "none";
+            micIcon.style.display = "inline";
+        };
+
+        document.getElementById("submit-leave").addEventListener("click", async () => {
+            if (!leaveType || !fromDate || !toDate) {
+                responseElement.textContent = "Please specify all fields: leave type, from date, and to date.";
+                return;
+            }
+
+            const data = {
+                employee_name: "Mr", 
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
                 leave_type: leaveType,
                 from_date: fromDate,
                 to_date: toDate
             };
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
             try {
                 const response = await fetch("http://127.0.0.1:5000/apply_leave", {
                     method: "POST",
@@ -240,7 +316,11 @@
                     },
                     body: JSON.stringify(data)
                 });
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
                 if (response.ok) {
                     const result = await response.json();
                     responseElement.textContent = result.message; // Success message
@@ -254,4 +334,8 @@
         });
     </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 901aba09f99c5a68f135a5a7d2af2ffd13454a17
