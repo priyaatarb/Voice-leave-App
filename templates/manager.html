@@ -90,7 +90,7 @@
     <script>
         async function fetchLeaveApplications() {
             try {
-                const response = await fetch('http://127.0.0.1:5000/get_leave_applications');
+                const response = await fetch('https://voice-leave-app.onrender.com/get_leave_applications');
                 const applications = await response.json();
 
                 const tableBody = document.querySelector('#applications-table tbody');
@@ -160,7 +160,7 @@
 
         async function approveLeave(id) {
             try {
-                const response = await fetch('http://127.0.0.1:5000/approve_leave', {
+                const response = await fetch('https://voice-leave-app.onrender.com/approve_leave', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -184,7 +184,7 @@
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:5000/reject_leave', {
+                const response = await fetch('https://voice-leave-app.onrender.com/reject_leave', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
