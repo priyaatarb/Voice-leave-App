@@ -8,6 +8,8 @@ const responseElement = document.getElementById("response");
 const micIcon = document.getElementById("start-voice");
 const listeningIcon = document.getElementById("listening-icon");
 
+
+
 let leaveType = "";
 let fromDate = "";
 let toDate = "";
@@ -91,6 +93,9 @@ recognition.onresult = (event) => {
     const fromMonth = months[dateMatches[0][2].toLowerCase()];
     const fromYear = 2025;
 
+    
+
+
     if (!isValidDate(fromDay, fromMonth, fromYear)) {
       errorMessages.push(
         `Invalid "From" date. Please check the day for ${dateMatches[0][2]} ${fromYear}.`
@@ -156,6 +161,24 @@ recognition.onerror = (event) => {
   responseElement.textContent = errorMessages.join(" ");
 };
 
+// Reset button functionality Added
+document.addEventListener("DOMContentLoaded", function () {
+    const resetButton = document.getElementById("reset");
+
+    resetButton.addEventListener("click", function () {
+      // Clear all inputs
+      document.getElementById("leave-type").value = "";
+      document.getElementById("from-date-combined").value = "";
+      document.getElementById("to-date-combined").value = "";
+
+      // Clear response div if any
+      const responseDiv = document.getElementById("response");
+      if (responseDiv) {
+        responseDiv.innerHTML = "";
+      }
+    });
+  });
+
 document
   .getElementById("submit-leave")
   .addEventListener("click", async () => {
@@ -164,6 +187,10 @@ document
         "Please fix the errors before submitting.";
       return;
     }
+// document.getElementById('reset').addEventListener('click', function () {
+//         location.reload();
+//       });
+
 
     const data = {
       employee_name: "Mr . employee name",
