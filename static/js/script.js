@@ -7,6 +7,8 @@ const toDateCombinedElement = document.getElementById("to-date-combined");
 const responseElement = document.getElementById("response");
 const micIcon = document.getElementById("start-voice");
 const listeningIcon = document.getElementById("listening-icon");
+let isListening = false;//added for reaet button functionality
+
 
 
 
@@ -58,22 +60,24 @@ micIcon.addEventListener("click", () => {
   recognition.start();
 });
 
+//new regex added to handel dated like ("Twenty first ,21st,new date().yeaar")
 recognition.onresult = (event) => {
   const transcript = event.results[0][0].transcript.toLowerCase();
   responseElement.textContent = `You said: "${transcript}"`;
 
   const leaveTypeRegex = /(sick|vacation|casual|emergency)/i;
-  const dateRegex =
-    /\b(\d{1,2})\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)\b/g;
+  const dateRangeRegex =
+    /\b(\d{1,2}(?:st|nd|rd|th)?|twenty[- ]?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)|thirty[- ]?(first))\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)?\b.*?\bto\b.*?\b(\d{1,2}(?:st|nd|rd|th)?|twenty[- ]?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)|thirty[- ]?(first))\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)\b/i;
 
   const leaveTypeMatch = transcript.match(leaveTypeRegex);
+  const dateRangeMatch = transcript.match(dateRangeRegex);
+
   if (leaveTypeMatch) {
     leaveType = leaveTypeMatch[0].trim();
     leaveTypeElement.value = leaveType;
   }
 
-  const dateMatches = [...transcript.matchAll(dateRegex)];
-  if (dateMatches.length >= 2) {
+  if (dateRangeMatch) {
     const months = {
       january: "01",
       february: "02",
@@ -87,71 +91,50 @@ recognition.onresult = (event) => {
       october: "10",
       november: "11",
       december: "12",
+      jan: "01",
+      feb: "02",
+      mar: "03",
+      apr: "04",
+      may: "05",
+      jun: "06",
+      jul: "07",
+      aug: "08",
+      sept: "09",
+      oct: "10",
+      nov: "11",
+      dec: "12",
     };
 
-    const fromDay = parseInt(dateMatches[0][1]);
-    const fromMonth = months[dateMatches[0][2].toLowerCase()];
-    const fromYear = 2025;
+    // Helper function to clean ordinal suffixes
+    const cleanOrdinal = (day) => {
+      return day.replace(/(st|nd|rd|th)$/i, "");
+    };
 
-    
+    // Parse "From Date"
+    const fromDay = cleanOrdinal(dateRangeMatch[1] || dateRangeMatch[2] || dateRangeMatch[3]);
+    const fromMonth = months[(dateRangeMatch[4] || "").toLowerCase()];
+    const fromYear = new Date().getFullYear(); // Use current year
+    const fromDate = `${fromYear}-${fromMonth}-${fromDay.padStart(2, "0")}`;
 
+    // Parse "To Date"
+    const toDay = cleanOrdinal(dateRangeMatch[5] || dateRangeMatch[6] || dateRangeMatch[7]);
+    const toMonth = months[(dateRangeMatch[8] || "").toLowerCase()];
+    const toYear = new Date().getFullYear(); // Use current year
+    const toDate = `${toYear}-${toMonth}-${toDay.padStart(2, "0")}`;
 
-    if (!isValidDate(fromDay, fromMonth, fromYear)) {
-      errorMessages.push(
-        `Invalid "From" date. Please check the day for ${dateMatches[0][2]} ${fromYear}.`
-      );
-      return;
-    }
-
-    fromDate = `${fromYear}-${fromMonth}-${fromDay
-      .toString()
-      .padStart(2, "0")}`;
+    // Update fields
     fromDateCombinedElement.value = fromDate;
-
-    const toDay = parseInt(dateMatches[1][1]);
-    const toMonth = months[dateMatches[1][2].toLowerCase()];
-    const toYear = 2025; // Automatically set the year to 2025
-
-    if (!isValidDate(toDay, toMonth, toYear)) {
-      errorMessages.push(
-        `Invalid "To" date. Please check the day for ${dateMatches[1][2]} ${toYear}.`
-      );
-      return;
-    }
-
-    toDate = `${toYear}-${toMonth}-${toDay.toString().padStart(2, "0")}`;
     toDateCombinedElement.value = toDate;
 
-    // Check if "From" date is in the past
-    if (isPastDate(fromDate)) {
-      errorMessages.push('"From" date cannot be in the past.');
-      return;
-    }
-
-    // Check if "To" date is in the past
-    if (isPastDate(toDate)) {
-      errorMessages.push('"To" date cannot be in the past.');
-      return;
-    }
-
-    // Check if "To" date is before "From" date
-    if (!isFromBeforeTo(fromDate, toDate)) {
-      errorMessages.push(
-        '"To" date should not be earlier than "From" date.'
-      );
-      return;
-    }
+    responseElement.textContent = `Parsed Dates: From ${fromDate} to ${toDate}`;
   } else {
-    errorMessages.push("Please mention both From Date and To Date.");
+    responseElement.textContent = "Could not parse dates. Please try again.";
   }
 
   listeningIcon.style.display = "none";
   micIcon.style.display = "inline";
-
-  if (errorMessages.length > 0) {
-    responseElement.textContent = errorMessages.join(" ");
-  }
 };
+
 
 recognition.onerror = (event) => {
   errorMessages.push(`Error: ${event.error}`);
@@ -162,22 +145,31 @@ recognition.onerror = (event) => {
 };
 
 // Reset button functionality Added
-document.addEventListener("DOMContentLoaded", function () {
-    const resetButton = document.getElementById("reset");
+// Function to reset all fields and stop recognition
+function resetForm() {
+  if (isListening) {
+    recognition.stop();  // Stop the voice recognition if it's ongoing
+    isListening = false;  // Set listening status to false
+  }
 
-    resetButton.addEventListener("click", function () {
-      // Clear all inputs
-      document.getElementById("leave-type").value = "";
-      document.getElementById("from-date-combined").value = "";
-      document.getElementById("to-date-combined").value = "";
+  // Clear the inputs
+  document.getElementById("leave-type").value = "";
+  document.getElementById("from-date-combined").value = "";
+  document.getElementById("to-date-combined").value = "";
 
-      // Clear response div if any
-      const responseDiv = document.getElementById("response");
-      if (responseDiv) {
-        responseDiv.innerHTML = "";
-      }
-    });
-  });
+  // Clear the response area
+  const responseDiv = document.getElementById("response");
+  if (responseDiv) {
+    responseDiv.innerHTML = "";
+  }
+
+  // Reset the icons
+  listeningIcon.style.display = "none";
+  micIcon.style.display = "inline";
+}
+
+// Add event listener to reset button
+document.getElementById("reset").addEventListener("click", resetForm);
 
 document
   .getElementById("submit-leave")
