@@ -65,19 +65,22 @@ recognition.onresult = (event) => {
   const transcript = event.results[0][0].transcript.toLowerCase();
   responseElement.textContent = `You said: "${transcript}"`;
 
-  const leaveTypeRegex = /(sick|vacation|casual|emergency)/i;
-  const dateRangeRegex =
-    /\b(\d{1,2}(?:st|nd|rd|th)?|twenty[- ]?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)|thirty[- ]?(first))\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)?\b.*?\bto\b.*?\b(\d{1,2}(?:st|nd|rd|th)?|twenty[- ]?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)|thirty[- ]?(first))\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)\b/i;
+  const leaveTypeRegex = /(sick|vacation|casual|emergency|maternity Leave|paternity Leave|red dot leave)/i;
+  const dateRegex =
+    /\b(\d{1,2})(?:st|nd|rd|th)?(?:\s*(to|-)\s*(\d{1,2})(?:st|nd|rd|th)?)?\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)?\b/i;
 
   const leaveTypeMatch = transcript.match(leaveTypeRegex);
-  const dateRangeMatch = transcript.match(dateRangeRegex);
-
   if (leaveTypeMatch) {
     leaveType = leaveTypeMatch[0].trim();
     leaveTypeElement.value = leaveType;
   }
 
-  if (dateRangeMatch) {
+  const dateMatch = transcript.match(dateRegex);
+  if (dateMatch) {
+    const day1 = parseInt(dateMatch[1]); // First date
+    const day2 = dateMatch[4] ? parseInt(dateMatch[4]) : null; // Second date
+    const month = dateMatch[5]?.toLowerCase() || null; // Month (if mentioned)
+
     const months = {
       january: "01",
       february: "02",
@@ -105,35 +108,46 @@ recognition.onresult = (event) => {
       dec: "12",
     };
 
-    // Helper function to clean ordinal suffixes
-    const cleanOrdinal = (day) => {
-      return day.replace(/(st|nd|rd|th)$/i, "");
-    };
+    if (month && months[month]) {
+      const currentYear = new Date().getFullYear();
+      const parsedMonth = months[month];
 
-    // Parse "From Date"
-    const fromDay = cleanOrdinal(dateRangeMatch[1] || dateRangeMatch[2] || dateRangeMatch[3]);
-    const fromMonth = months[(dateRangeMatch[4] || "").toLowerCase()];
-    const fromYear = new Date().getFullYear(); // Use current year
-    const fromDate = `${fromYear}-${fromMonth}-${fromDay.padStart(2, "0")}`;
+      // Handle the "from" date
+      if (isValidDate(day1, parsedMonth, currentYear)) {
+        fromDate = `${currentYear}-${parsedMonth}-${day1
+          .toString()
+          .padStart(2, "0")}`;
+        fromDateCombinedElement.value = fromDate;
+      } else {
+        errorMessages.push(`Invalid "From" date: ${day1} ${month}.`);
+      }
 
-    // Parse "To Date"
-    const toDay = cleanOrdinal(dateRangeMatch[5] || dateRangeMatch[6] || dateRangeMatch[7]);
-    const toMonth = months[(dateRangeMatch[8] || "").toLowerCase()];
-    const toYear = new Date().getFullYear(); // Use current year
-    const toDate = `${toYear}-${toMonth}-${toDay.padStart(2, "0")}`;
-
-    // Update fields
-    fromDateCombinedElement.value = fromDate;
-    toDateCombinedElement.value = toDate;
-
-    responseElement.textContent = `Parsed Dates: From ${fromDate} to ${toDate}`;
+      // Handle the "to" date (if mentioned)
+      if (day2 && isValidDate(day2, parsedMonth, currentYear)) {
+        toDate = `${currentYear}-${parsedMonth}-${day2
+          .toString()
+          .padStart(2, "0")}`;
+        toDateCombinedElement.value = toDate;
+      } else if (day2) {
+        errorMessages.push(`Invalid "To" date: ${day2} ${month}.`);
+      }
+    } else {
+      errorMessages.push("Please specify a valid month.");
+    }
   } else {
-    responseElement.textContent = "Could not parse dates. Please try again.";
+    errorMessages.push(
+      "Please mention the leave dates in a proper format (e.g., '27 to 29 January')."
+    );
   }
 
   listeningIcon.style.display = "none";
   micIcon.style.display = "inline";
+
+  if (errorMessages.length > 0) {
+    responseElement.textContent = errorMessages.join(" ");
+  }
 };
+
 
 
 recognition.onerror = (event) => {
@@ -176,7 +190,7 @@ document
   .addEventListener("click", async () => {
     if (errorMessages.length > 0 || !leaveType || !fromDate || !toDate) {
       responseElement.textContent =
-        "Please fix the errors before submitting.";
+        "Please fix the errors before submitting (check dates wheather dates are incorrect).";
       return;
     }
 // document.getElementById('reset').addEventListener('click', function () {
