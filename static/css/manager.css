@@ -1,0 +1,104 @@
+
+         body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .container {
+        max-width: 90vw; /* Use viewport width for better responsiveness */
+        margin: 20px auto; /* Maintain center alignment */
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      
+      th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      
+      button {
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: #28a745;
+        color: white;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        background-color: #218838;
+      }
+      
+      .reject-btn {
+        background-color: #dc3545;
+      }
+      
+      .reject-btn:hover {
+        background-color: #c82333;
+      }
+      
+      .voice-btn {
+        background-color: #0857e9;
+        color: white;
+        border-radius: 35%;
+        border: none;
+        width: 60px;
+        height: 30px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      
+      .voice-btn:hover {
+        background-color: #092b4e;
+      }
+      
+      .description-box {
+        margin-top: 10px;
+      }
+      
+      /* Media Queries for Responsiveness */
+      @media (max-width: 768px) {
+      
+        table {
+          font-size: 0.9em; 
+          display: block;
+          overflow-x: auto;
+        }
+      
+        
+       
+        button {
+          padding: 4px 8px; 
+        }
+      }
+      
+      @media (max-width: 480px) {
+        
+        table {
+          font-size: 0.8em;
+        }
+      
+       
+        button {
+          padding: 3px 6px; 
+        }
+      }
+    
