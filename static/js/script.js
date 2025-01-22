@@ -65,7 +65,8 @@ recognition.onresult = (event) => {
   const transcript = event.results[0][0].transcript.toLowerCase();
   responseElement.textContent = `You said: "${transcript}"`;
 
-  const leaveTypeRegex = /(sick|vacation|casual|emergency)/i;
+  const leaveTypeRegex = /\b(sick|vacation|casual|emergency|maternity\s*leave|paternity\s*leave|red dot leave)\b/i;
+
   const dateRegex =
     /\b(\d{1,2})\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)\b/g;
 
