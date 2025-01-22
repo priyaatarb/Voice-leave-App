@@ -65,10 +65,9 @@ recognition.onresult = (event) => {
   const transcript = event.results[0][0].transcript.toLowerCase();
   responseElement.textContent = `You said: "${transcript}"`;
 
-  const leaveTypeRegex = /\b(sick|vacation|casual|emergency|maternity\s*leave|paternity\s*leave|red dot leave)\b/i;
-
+  const leaveTypeRegex = /(sick|vacation|casual|emergency)/i;
   const dateRegex =
-    /\b(\d{1,2})(?:st|nd|rd|th)?(?:\s*(to|-)\s*(\d{1,2})(?:st|nd|rd|th)?)?\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)?\b/i;
+    /\b(\d{1,2})\s*(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)\b/g;
 
   const leaveTypeMatch = transcript.match(leaveTypeRegex);
   if (leaveTypeMatch) {
@@ -76,12 +75,8 @@ recognition.onresult = (event) => {
     leaveTypeElement.value = leaveType;
   }
 
-  const dateMatch = transcript.match(dateRegex);
-  if (dateMatch) {
-    const day1 = parseInt(dateMatch[1]); // First date
-    const day2 = dateMatch[4] ? parseInt(dateMatch[4]) : null; // Second date
-    const month = dateMatch[5]?.toLowerCase() || null; // Month (if mentioned)
-
+  const dateMatches = [...transcript.matchAll(dateRegex)];
+  if (dateMatches.length >= 2) {
     const months = {
       january: "01",
       february: "02",
@@ -95,50 +90,60 @@ recognition.onresult = (event) => {
       october: "10",
       november: "11",
       december: "12",
-      jan: "01",
-      feb: "02",
-      mar: "03",
-      apr: "04",
-      may: "05",
-      jun: "06",
-      jul: "07",
-      aug: "08",
-      sept: "09",
-      oct: "10",
-      nov: "11",
-      dec: "12",
     };
 
-    if (month && months[month]) {
-      const currentYear = new Date().getFullYear();
-      const parsedMonth = months[month];
+    const fromDay = parseInt(dateMatches[0][1]);
+    const fromMonth = months[dateMatches[0][2].toLowerCase()];
+    const fromYear = 2025;
 
-      // Handle the "from" date
-      if (isValidDate(day1, parsedMonth, currentYear)) {
-        fromDate = `${currentYear}-${parsedMonth}-${day1
-          .toString()
-          .padStart(2, "0")}`;
-        fromDateCombinedElement.value = fromDate;
-      } else {
-        errorMessages.push(`Invalid "From" date: ${day1} ${month}.`);
-      }
+    
+    if (!isValidDate(fromDay, fromMonth, fromYear)) {
+      errorMessages.push(
+        `Invalid "From" date. Please check the day for ${dateMatches[0][2]} ${fromYear}.`
+      );
+      return;
+    }
 
-      // Handle the "to" date (if mentioned)
-      if (day2 && isValidDate(day2, parsedMonth, currentYear)) {
-        toDate = `${currentYear}-${parsedMonth}-${day2
-          .toString()
-          .padStart(2, "0")}`;
-        toDateCombinedElement.value = toDate;
-      } else if (day2) {
-        errorMessages.push(`Invalid "To" date: ${day2} ${month}.`);
-      }
-    } else {
-      errorMessages.push("Please specify a valid month.");
+    fromDate = `${fromYear}-${fromMonth}-${fromDay
+      .toString()
+      .padStart(2, "0")}`;
+    fromDateCombinedElement.value = fromDate;
+
+    const toDay = parseInt(dateMatches[1][1]);
+    const toMonth = months[dateMatches[1][2].toLowerCase()];
+    const toYear = 2025; // Automatically set the year to 2025
+
+    if (!isValidDate(toDay, toMonth, toYear)) {
+      errorMessages.push(
+        `Invalid "To" date. Please check the day for ${dateMatches[1][2]} ${toYear}.`
+      );
+      return;
+    }
+
+    toDate = `${toYear}-${toMonth}-${toDay.toString().padStart(2, "0")}`;
+    toDateCombinedElement.value = toDate;
+
+    // Check if "From" date is in the past
+    if (isPastDate(fromDate)) {
+      errorMessages.push('"From" date cannot be in the past.');
+      return;
+    }
+
+    // Check if "To" date is in the past
+    if (isPastDate(toDate)) {
+      errorMessages.push('"To" date cannot be in the past.');
+      return;
+    }
+
+    // Check if "To" date is before "From" date
+    if (!isFromBeforeTo(fromDate, toDate)) {
+      errorMessages.push(
+        '"To" date should not be earlier than "From" date.'
+      );
+      return;
     }
   } else {
-    errorMessages.push(
-      "Please mention the leave dates in a proper format (e.g., '27 to 29 January')."
-    );
+    errorMessages.push("Please mention both From Date and To Date.");
   }
 
   listeningIcon.style.display = "none";
@@ -147,6 +152,14 @@ recognition.onresult = (event) => {
   if (errorMessages.length > 0) {
     responseElement.textContent = errorMessages.join(" ");
   }
+};
+
+recognition.onerror = (event) => {
+  errorMessages.push(`Error: ${event.error}`);
+  listeningIcon.style.display = "none";
+  micIcon.style.display = "inline";
+
+  responseElement.textContent = errorMessages.join(" ");
 };
 
 
