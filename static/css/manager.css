@@ -20,19 +20,21 @@
       
       h1 {
         text-align: center;
-        color: #333;
+        color: white;
       }
       
       table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        background-color:#45394b;
       }
       
       th, td {
         padding: 10px;
-        border: 1px solid #ddd;
+        border: 1px solid #2f2c31;
         text-align: left;
+        
       }
       
       button {
@@ -44,7 +46,7 @@
       }
       
       button:hover {
-        background-color: #218838;
+        background-color: #95ee7a;
       }
       
       .reject-btn {

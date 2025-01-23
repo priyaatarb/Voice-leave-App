@@ -144,7 +144,7 @@ recognition.onresult = (event) => {
       return;
     }
   } else {
-    errorMessages.push("Please mention both From Date and To Date.");
+    errorMessages.push("Please say valid From Date and To Date (check wheather the entered day is a past day).");
   }
 
   listeningIcon.style.display = "none";
@@ -165,13 +165,7 @@ recognition.onerror = (event) => {
 
 
 
-recognition.onerror = (event) => {
-  errorMessages.push(`Error: ${event.error}`);
-  listeningIcon.style.display = "none";
-  micIcon.style.display = "inline";
 
-  responseElement.textContent = errorMessages.join(" ");
-};
 
 // Reset button functionality Added
 // Function to reset all fields and stop recognition
@@ -234,9 +228,11 @@ document
         responseElement.textContent = result.message; // Success message
       } else {
         const error = await response.json();
+         responseElement.textContent =""
         responseElement.textContent = `Error: ${error.detail}`; // Error details
       }
     } catch (error) {
+      responseElement.textContent =""
       responseElement.textContent = `Error applying leave: ${error.message}`; // Network error
     }
   });

@@ -15,17 +15,20 @@
   </head>
   <body>
     <div class="container">
-      <h1>Voice Leave Application</h1>
-
+      <!-- <h1>Voice Leave Application</h1> -->
       <h1>
         <i class="fa-solid fa-microphone" id="start-voice" class="mic-icon"></i>
-
-        <i
-          class="fa-solid fa-headset"
-          id="listening-icon"
-          class="listening-icon"
-        ></i>
+        
+        <div class="listening-icon" id="listening-icon">
+          <i class="fa-solid fa-microphone mic-icon"></i>
+          <div class="pulse-div">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
       </h1>
+      <div id="response" class="response"></div>
       <div class="main-container">
         <div class="left-container">
           <div>
@@ -64,7 +67,7 @@
             <button id="reset">Reset</button>
             <button id="submit-leave">Submit Leave</button>
           </div>
-          <div id="response" class="response"></div>
+          
         </div>
         <div class="right-container">
           <img
