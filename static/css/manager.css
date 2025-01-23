@@ -4,15 +4,18 @@
         background-color: #f4f4f9;
         margin: 0;
         padding: 0;
+        background: linear-gradient(to right, rgba(49,33,50,1), rgba(2,2,4,1));
       }
       
       .container {
         max-width: 90vw; /* Use viewport width for better responsiveness */
         margin: 20px auto; /* Maintain center alignment */
         background: #fff;
-        padding: 20px;
+        padding:0px;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #3b2e3b;
+        color: white;
       }
       
       h1 {
@@ -35,7 +38,7 @@
       button {
         padding: 5px 10px;
         border-radius: 5px;
-        background-color: #28a745;
+       background-color: #caf3be;
         color: white;
         cursor: pointer;
       }
@@ -45,15 +48,15 @@
       }
       
       .reject-btn {
-        background-color: #dc3545;
+        background-color: #f2c3bc;
       }
       
       .reject-btn:hover {
-        background-color: #c82333;
+        background-color:#f08f80;
       }
       
       .voice-btn {
-        background-color: #0857e9;
+        background-color: #caf3be;
         color: white;
         border-radius: 35%;
         border: none;
@@ -67,7 +70,7 @@
       }
       
       .voice-btn:hover {
-        background-color: #092b4e;
+        background-color:#95ee7a;
       }
       
       .description-box {

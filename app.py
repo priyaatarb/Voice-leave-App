@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from datetime import datetime
+import os
 
 
 
@@ -30,7 +31,7 @@ leave_applications = [
 
 @app.route('/')
 def home():
-    return "Welcome to the Voice Leave Management App!"
+    return  render_template('index.html')
 
 @app.route('/manager_review')
 def manager_review():
