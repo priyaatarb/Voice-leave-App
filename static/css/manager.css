@@ -6,6 +6,30 @@
         padding: 0;
         background: linear-gradient(to right, rgba(49,33,50,1), rgba(2,2,4,1));
       }
+
+
+      #m-page{
+        text-decoration: none;
+        bottom: 0;
+        transition: background 0.3s ease-in-out;
+        
+      }
+      
+      #redirect:hover{
+        background-color: #95ee7a;
+      }
+      
+      #redirect{
+        height: 50px; 
+        width: 100px;
+        background-color: #caf3be;
+        padding: 5px;
+        /* margin: 30px auto; */
+       
+        color: black;
+        font-weight: 200;
+      }
+      
       
       .container {
         max-width: 90vw; /* Use viewport width for better responsiveness */

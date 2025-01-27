@@ -231,7 +231,7 @@ document
          responseElement.textContent =""
         responseElement.textContent = `Error: ${error.detail}`; // Error details
       }
-    } catch (error) {
+    } catch (error) {   
       responseElement.textContent =""
       responseElement.textContent = `Error applying leave: ${error.message}`; // Network error
     }

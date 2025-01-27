@@ -4,9 +4,9 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f4f4f9;
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
  /* background-image:url(/static/images/Desktop\ wallpaper.jpg);
   background-size:cover;*/
   background: linear-gradient(to right, rgba(49,33,50,1), rgba(2,2,4,1));
@@ -107,10 +107,10 @@ h1 {
 }
 .mic-icon {
   cursor: pointer;
-  width: 48px; /* Adjusted width */
-  height: 48px; /* Adjusted height */
-  font-size: 48px; /* Ensure font size matches */
-  color: #b683c6; /* Your chosen color */
+  width: 48px; 
+  height: 48px; 
+  font-size: 48px; 
+  color: #b683c6; 
   transition: transform 0.2s ease; /* Smooth shrinking effect */
 }
 
@@ -123,8 +123,8 @@ h1 {
   position: relative;
   display: inline-block;
   text-align: center;
-  margin-top: 10px; /* Adjust alignment */
-  width: 48px; /* Match the mic size */
+  margin-top: 10px;
+  width: 48px; 
   height: 48px;
 }
 
@@ -144,7 +144,7 @@ h1 {
   position: absolute;
   width: 80px; /* Pulse size */
   height: 80px;
-  border: 2px solid #b683c6; /* Keep your color */
+  border: 2px solid #b683c6; 
   border-radius: 50%;
   animation: pulse 1.5s infinite ease-in-out;
   opacity: 0;
@@ -200,7 +200,6 @@ button {
   margin: 15px 0;
   border: none;
   border-radius: 20px;
-  color: white;
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s ease-in-out;
@@ -231,6 +230,30 @@ button {
   color: white;
   font-size: 1rem;
   margin-top: 10px;
+}
+
+#m-page{
+  text-decoration: none;
+  float: right;
+  bottom: 0;
+  transition: background 0.3s ease-in-out;
+ 
+}
+
+#redirect:hover{
+  background-color: #95ee7a;
+}
+
+.redirect{
+ float: right;
+}
+
+#redirect{
+  height: 50px; 
+  width: 100px;
+  background-color: #caf3be;
+  padding: 5px;
+  margin: 30px auto;
 }
 
 /* Responsive Design */
